@@ -1,7 +1,7 @@
 # iniciando mi repositorio
 ## Estructura del proyecto
 motos-sonia-web/    
-│    
+│        
 ├── index.html          → Portada principal del negocio    
 ├── catalogo.html       → Catálogo con subcategorías de productos    
 ├── producto.html       → Ficha técnica de producto destacado    
