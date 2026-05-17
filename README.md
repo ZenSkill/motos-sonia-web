@@ -1,5 +1,6 @@
 # iniciando mi repositorio
 ## Estructura del proyecto
+``` texto
 motos-sonia-web/
 │
 ├── index.html          → Portada principal del negocio
@@ -16,3 +17,4 @@ motos-sonia-web/
 │
 └── img/
     └── slide1-mototaxi.png → Imagen institucional para nosotros.html
+```
