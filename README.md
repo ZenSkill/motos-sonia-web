@@ -1,5 +1,5 @@
 # iniciando mi repositorio
-## Estructura del proyecto
+## Estructura basica del proyecto
 ``` texto
 motos-sonia-web/
 │
