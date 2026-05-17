@@ -14,5 +14,5 @@ motos-sonia-web/
 │   └── icons/    
 │       └── logo.png    → Logotipo de Motos Sonia    
 │    
-└── img/    
+└── img/        
     └── slide1-mototaxi.png → Imagen institucional para nosotros.html    
