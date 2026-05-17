@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Producto | Motos Sonia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="./index.html" class="brand"><img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" /><span>Motos Sonia</span></a>
+      <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
+      <nav class="site-nav" data-nav>
+        <a href="./index.html">Inicio</a>
+        <a href="./catalogo.html">Catálogo</a>
+        <a href="./producto.html" class="active">Producto</a>
+        <a href="./nosotros.html">Nosotros</a>
+        <a href="./contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="section">
+      <div class="container product-layout">
+        <div class="product-gallery">
+          <img id="mainProductImage" class="main-product-image" src="./assets/img/productos/motocarguero-01.svg" alt="Imagen principal del producto" width="400" height="400" />
+          <div class="thumb-row">
+            <button class="thumb active" data-thumb="./assets/img/productos/motocarguero-01.svg"><img src="./assets/img/productos/motocarguero-01.svg" alt="Vista uno del producto" width="120" height="120" loading="lazy" /></button>
+            <button class="thumb" data-thumb="./assets/img/productos/motocarguero-02.svg"><img src="./assets/img/productos/motocarguero-02.svg" alt="Vista dos del producto" width="120" height="120" loading="lazy" /></button>
+            <button class="thumb" data-thumb="./assets/img/productos/motocarguero-03.svg"><img src="./assets/img/productos/motocarguero-03.svg" alt="Vista tres del producto" width="120" height="120" loading="lazy" /></button>
+          </div>
+        </div>
+        <div class="product-copy">
+          <p class="eyebrow">Ficha técnica comercial</p>
+          <h1>Motocarguero Pro Cargo 250</h1>
+          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+          <div class="spec-grid">
+            <div><span>Motor</span><strong>250 cc</strong></div>
+            <div><span>Capacidad</span><strong>500 kg</strong></div>
+            <div><span>Uso sugerido</span><strong>Transporte de carga</strong></div>
+            <div><span>Disponibilidad</span><strong>Consultar</strong></div>
+          </div>
+          <a class="button button-primary whatsapp-cta" target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia%2C%20quiero%20consultar%20por%20la%20Motocarguero%20Pro%20Cargo%20250">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container split-section details-block">
+        <div>
+          <p class="eyebrow">Descripción</p>
+          <h2>Detalle del producto</h2>
+        </div>
+        <div>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer compact-footer">
+    <div class="container footer-grid">
+      <div><p>Ficha de producto lista para reutilizar con más modelos.</p></div>
+      <div><a href="./catalogo.html">Volver al catálogo</a></div>
+    </div>
+  </footer>
+  <script src="./assets/js/main.js" defer></script>
+</body>
+</html>

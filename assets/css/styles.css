@@ -1,0 +1,666 @@
+/* ========== 1. Variables y base global ========== */
+
+:root {
+  --bg: #f5f9ff;
+  --surface: #ffffff;
+  --surface-soft: #eef5ff;
+  --text: #10233f;
+  --muted: #5d6f8a;
+  --line: rgba(16, 35, 63, 0.12);
+  --primary: #1f6fff;
+  --primary-dark: #1254cb;
+  --accent: #dce9ff;
+  --shadow: 0 18px 50px rgba(16, 35, 63, 0.08);
+  --radius: 24px;
+  --radius-sm: 16px;
+  --max: 1180px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(180deg, #f8fbff 0%, #f3f7fd 100%);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  height: auto;
+}
+
+/* Aplicar redondeo global a todas las imágenes del proyecto */
+img {
+  border-radius: var(--radius-sm);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+/* ========== 2. Accesibilidad ========== */
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -40px;
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  z-index: 1000;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ========== 3. Layout general ========== */
+
+.container {
+  width: min(calc(100% - 32px), var(--max));
+  margin: 0 auto;
+}
+
+.narrow {
+  max-width: 760px;
+}
+
+.section {
+  padding: 88px 0;
+}
+
+.section-soft {
+  background: var(--surface-soft);
+}
+
+.section-dark {
+  background: linear-gradient(135deg, #0f2342 0%, #16345f 100%);
+  color: #fff;
+}
+
+/* ========== 4. Header y navegación (todas las páginas) ========== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px);
+  background: rgba(245, 249, 255, 0.82);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-wrap {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.site-nav a:not(.button) {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.site-nav a.active,
+.site-nav a:hover:not(.button) {
+  color: var(--text);
+}
+
+.menu-toggle {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  margin: 4px auto;
+  background: var(--text);
+  border-radius: 999px;
+}
+
+/* ========== 5. Tipografía y elementos de texto ========== */
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--primary);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.eyebrow-light {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 16px;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+h1 {
+  font-size: clamp(2.6rem, 5vw, 4.8rem);
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3vw, 3rem);
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+
+p {
+  margin: 0 0 16px;
+  color: var(--muted);
+}
+
+.lead {
+  font-size: 1.08rem;
+  max-width: 60ch;
+}
+
+/* ========== 6. Componentes reutilizables ========== */
+
+.hero-grid,
+.product-layout,
+.contact-layout,
+.about-grid,
+.split-section,
+.map-block {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+/* Grids específicos de secciones */
+.hero-grid {
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.product-layout {
+  grid-template-columns: 1fr 1fr;
+}
+
+.contact-layout,
+.about-grid,
+.map-block {
+  grid-template-columns: 1fr 1fr;
+}
+
+.split-section {
+  grid-template-columns: 0.75fr 1.25fr;
+}
+
+/* Listas tipo chips en el hero */
+.hero-actions,
+.cta-band-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0;
+  margin: 28px 0 0;
+  list-style: none;
+}
+
+.hero-points li,
+.card-tag {
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+/* Botones */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  transition: 0.25s ease;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(31, 111, 255, 0.25);
+}
+
+.button-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.button-secondary {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.button-light {
+  background: #fff;
+  color: var(--text);
+}
+
+.button-secondary:hover,
+.button-light:hover {
+  transform: translateY(-1px);
+}
+
+/* Tarjetas y superficies */
+.card-glass,
+.product-card,
+.benefit-item,
+.category-card,
+.mini-card,
+.contact-form,
+.spec-grid > div {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+}
+
+/* ========== 7. Home (index.html) ========== */
+
+.card-glass {
+  padding: 20px;
+}
+
+.section-head {
+  margin-bottom: 32px;
+  max-width: 760px;
+}
+
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+.cards-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.product-card {
+  padding: 20px;
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+/* Beneficios */
+.benefits-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benefit-item {
+  padding: 24px;
+}
+
+/* Banda CTA oscuro */
+.cta-band-inner {
+  justify-content: space-between;
+}
+
+/* ========== 8. Footer (todas las páginas) ========== */
+
+.site-footer {
+  padding: 36px 0 44px;
+  background: #f8fbff;
+  border-top: 1px solid var(--line);
+}
+
+.footer-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr;
+}
+
+.footer-brand {
+  margin-bottom: 14px;
+}
+
+.footer-grid ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.compact-footer .footer-grid {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+/* ========== 9. Catálogo (catalogo.html) ========== */
+
+.page-hero {
+  padding-bottom: 24px;
+}
+
+.category-list {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.category-card {
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+.category-card.large {
+  grid-column: 1 / -1;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+}
+
+/* ========== 10. Producto (producto.html) ========== */
+
+.main-product-image {
+  width: 100%;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.thumb-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.thumb {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.thumb.active {
+  border-color: var(--primary);
+}
+
+.thumb img {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.spec-grid {
+  margin: 24px 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.spec-grid > div {
+  padding: 18px;
+}
+
+.spec-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.spec-grid strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.05rem;
+}
+
+/* ========== 11. Nosotros (nosotros.html) ========== */
+
+.trust-stats {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 24px;
+}
+
+.trust-stats div {
+  padding: 18px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.trust-stats strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ========== 12. Contacto (contacto.html) ========== */
+
+.contact-cards {
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.mini-card,
+.contact-form {
+  padding: 24px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 16px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* Mapa embebido */
+
+iframe {
+  width: 100%;
+  min-height: 360px;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ========== 13. Responsivo (mobile / tablet) ========== */
+
+@media (max-width: 980px) {
+  .hero-grid,
+  .product-layout,
+  .contact-layout,
+  .about-grid,
+  .split-section,
+  .map-block,
+  .cards-3,
+  .benefits-grid,
+  .footer-grid,
+  .category-list,
+  .category-card.large,
+  .trust-stats {
+    grid-template-columns: 1fr;
+  }
+
+  /* Navegación móvil */
+  .site-nav {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 16px;
+    right: 16px;
+    padding: 18px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .site-nav.open {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 72px 0;
+  }
+
+  .container {
+    width: min(calc(100% - 24px), var(--max));
+  }
+
+  .hero-actions,
+  .cta-band-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .thumb-row {
+    flex-wrap: wrap;
+  }
+}
+
+/* ========== 14. Ajustes adicionales de responsividad ======== */
+
+/* Evitar que elementos grid/flex hagan overflow por no poder reducirse */
+.container,
+.nav-wrap,
+.hero-copy,
+.hero-media,
+.product-copy,
+.product-gallery,
+.split-section > div,
+.section-head,
+.footer-grid > div,
+.card-glass,
+.product-card,
+.category-card {
+  min-width: 0;
+}
+
+/* Grillas más flexibles */
+.cards-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.category-list { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+/* Hero y producto con columnas adaptables */
+.hero-grid { grid-template-columns: 1fr minmax(260px, 480px); gap: 24px; }
+.product-layout { grid-template-columns: minmax(220px, 420px) 1fr; }
+
+/* Botones y textos pueden envolver en varias líneas para evitar overflow */
+.button { white-space: normal; word-break: break-word; overflow-wrap: break-word; }
+h1, h2, h3, p, .lead, .card-tag { word-break: break-word; overflow-wrap: break-word; }
+
+/* Thumbs y card images responsivas */
+.thumb img { width: 92px; height: 92px; max-width: 100%; }
+.product-card img, .category-card img { width: 100%; height: auto; }
+
+@media (max-width: 980px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .product-layout { grid-template-columns: 1fr; }
+  .cards-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+}
+
+/* Aumentar tamaño del contenedor de la ilustración y su imagen en escritorio */
+@media (min-width: 981px) {
+  /* Solo aplicar en la página de inicio */
+  .page-index .hero-grid {
+    grid-template-columns: 1fr minmax(420px, 760px);
+    gap: 36px;
+    align-items: center;
+  }
+
+  .page-index .hero-media {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+  }
+
+  .page-index .hero-media img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: calc(var(--radius) / 2);
+    box-shadow: var(--shadow);
+    display: block;
+  }
+}

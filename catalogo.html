@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catálogo | Motos Sonia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="./index.html" class="brand"><img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" /><span>Motos Sonia</span></a>
+      <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
+      <nav class="site-nav" data-nav>
+        <a href="./index.html">Inicio</a>
+        <a href="./catalogo.html" class="active">Catálogo</a>
+        <a href="./producto.html">Producto</a>
+        <a href="./nosotros.html">Nosotros</a>
+        <a href="./contacto.html">Contacto</a>
+        <a class="button button-primary" target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia%2C%20quiero%20ver%20su%20cat%C3%A1logo">Consultar por WhatsApp</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="page-hero section">
+      <div class="container narrow">
+        <p class="eyebrow">Catálogo comercial</p>
+        <h1>Categorías organizadas para una búsqueda más rápida.</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="category-list">
+          <article class="category-card large">
+            <img src="./assets/img/categorias/cat-motocargueros.svg" alt="Categoría motocargueros" width="400" height="400" loading="lazy" />
+            <div>
+              <p class="card-tag">Categoría</p>
+              <h2>Motocargueros</h2>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+              <a class="button button-secondary" href="./producto.html">Explorar ficha</a>
+            </div>
+          </article>
+          <article class="category-card">
+            <img src="./assets/img/categorias/cat-lineales.svg" alt="Categoría motos lineales" width="400" height="400" loading="lazy" />
+            <div><h2>Motos lineales</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </article>
+          <article class="category-card">
+            <img src="./assets/img/categorias/cat-mototaxis.svg" alt="Categoría mototaxis" width="400" height="400" loading="lazy" />
+            <div><h2>Mototaxis</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </article>
+          <article class="category-card">
+            <img src="./assets/img/categorias/cat-motores.svg" alt="Categoría motores" width="400" height="400" loading="lazy" />
+            <div><h2>Motores</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </article>
+          <article class="category-card">
+            <img src="./assets/img/categorias/cat-aceites.svg" alt="Categoría aceites y lubricantes" width="400" height="400" loading="lazy" />
+            <div><h2>Aceites y lubricantes</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer compact-footer">
+    <div class="container footer-grid">
+      <div><p>© Motos Sonia. Catálogo digital listo para desplegar.</p></div>
+      <div><a href="./contacto.html">Ir a contacto</a></div>
+    </div>
+  </footer>
+  <script src="./assets/js/main.js" defer></script>
+</body>
+</html>

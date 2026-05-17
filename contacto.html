@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contacto | Motos Sonia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="./index.html" class="brand"><img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" /><span>Motos Sonia</span></a>
+      <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
+      <nav class="site-nav" data-nav>
+        <a href="./index.html">Inicio</a>
+        <a href="./catalogo.html">Catálogo</a>
+        <a href="./producto.html">Producto</a>
+        <a href="./nosotros.html">Nosotros</a>
+        <a href="./contacto.html" class="active">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="section">
+      <div class="container contact-layout">
+        <div>
+          <p class="eyebrow">Contacto directo</p>
+          <h1>Hablemos sobre el producto que necesitas.</h1>
+          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <div class="contact-cards">
+            <article class="mini-card"><h2>Teléfono</h2><a href="tel:+51999999999">+51 999 999 999</a></article>
+            <article class="mini-card"><h2>Facebook</h2><a target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/profile.php?id=100067538621217">Motos Sonia</a></article>
+            <article class="mini-card"><h2>WhatsApp</h2><a target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia%2C%20quiero%20hacer%20una%20consulta">Consultar por WhatsApp</a></article>
+          </div>
+        </div>
+        <form class="contact-form">
+          <label>Nombre completo<input type="text" name="nombre" placeholder="Tu nombre" /></label>
+          <label>Teléfono<input type="tel" name="telefono" placeholder="Tu número" /></label>
+          <label>Producto de interés<input type="text" name="producto" placeholder="Ej. motocarguero" /></label>
+          <label>Mensaje<textarea name="mensaje" rows="5" placeholder="Escribe tu consulta"></textarea></label>
+          <button type="submit" class="button button-primary">Enviar consulta</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container map-block">
+        <div>
+          <p class="eyebrow">Ubicación</p>
+          <h2>Punto de atención referencial</h2>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+        <iframe title="Mapa referencial de Motos Sonia" src="https://www.google.com/maps?q=Huaral%20Peru&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer compact-footer">
+    <div class="container footer-grid">
+      <div><p>Canales de contacto listos para edición con datos reales.</p></div>
+      <div><a target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia">WhatsApp</a></div>
+    </div>
+  </footer>
+  <script src="./assets/js/main.js" defer></script>
+</body>
+</html>
