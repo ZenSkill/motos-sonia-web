@@ -12,7 +12,7 @@ motos-sonia-web/
 │   ├── css/    
 │   │   └── styles.css  → Hoja de estilos general del sitio    
 │   └── icons/    
-│       └── logo.png    → Logotipo de Motos Sonia    
+│           └── logo.png    → Logotipo de Motos Sonia    
 │    
 └── img/        
-    └── slide1-mototaxi.png → Imagen institucional para nosotros.html    
+        └── slide1-mototaxi.png → Imagen institucional para nosotros.html    
