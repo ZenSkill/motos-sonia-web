@@ -22,6 +22,18 @@
   const resetButton = document.querySelector('#catalogAdminReset');
   const newButton = document.querySelector('#catalogAdminNew');
 
+  const API_BASE = (() => {
+    if (window.API_BASE_URL && String(window.API_BASE_URL).trim()) {
+      return String(window.API_BASE_URL).trim().replace(/\/$/, '');
+    }
+
+    if (window.location?.protocol === 'file:') {
+      return 'http://localhost:3000';
+    }
+
+    return '';
+  })();
+
   const CLOUDINARY_CLOUD = window.CLOUDINARY_CLOUD || null; // set in admin.html if available
   const CLOUDINARY_PRESET = window.CLOUDINARY_PRESET || null; // unsigned preset
 
@@ -81,7 +93,7 @@
   };
 
   const apiFetch = async (url, options = {}) => {
-    const response = await fetch(url, {
+    const response = await fetch(`${API_BASE}${url}`, {
       credentials: 'same-origin',
       headers: {
         Accept: 'application/json',
@@ -216,7 +228,7 @@
   };
 
   const loadCatalog = async () => {
-    const catalog = await apiFetch('./api/catalogo');
+    const catalog = await apiFetch('/api/catalogo');
     state.catalog = core.normalizeCatalog(catalog);
     renderList();
     emptyForm();
@@ -230,6 +242,7 @@
 
     const payload = core.normalizeCatalog(state.catalog);
     const result = await apiFetch('./api/catalogo', {
+    const result = await apiFetch('/api/catalogo', {
       method: 'PUT',
       body: JSON.stringify(payload)
     });
@@ -340,6 +353,7 @@
 
     try {
       await apiFetch('./api/auth/login', {
+      await apiFetch('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ username, password })
       });
@@ -357,6 +371,7 @@
   const logout = async () => {
     try {
       await apiFetch('./api/auth/logout', { method: 'POST' });
+      await apiFetch('/api/auth/logout', { method: 'POST' });
     } catch {
       // Ignore logout errors.
     }
@@ -367,7 +382,7 @@
 
   const checkSession = async () => {
     try {
-      const session = await apiFetch('./api/auth/session');
+      const session = await apiFetch('/api/auth/session');
       setAuthUI(Boolean(session.authenticated));
 
       if (session.authenticated) {

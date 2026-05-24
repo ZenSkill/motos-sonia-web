@@ -203,7 +203,9 @@
     render();
 
     if (initialProductId) {
-      const initialProduct = state.products.find((product) => product.id === initialProductId);
+      const initialProduct = (typeof core.loadProductById === 'function'
+        ? await core.loadProductById(initialProductId)
+        : state.products.find((product) => product.id === initialProductId));
       if (initialProduct) {
         state.selectedId = initialProduct.id;
         renderDetail(initialProduct);

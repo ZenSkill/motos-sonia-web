@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import bcrypt from 'bcryptjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
 import mongoose from 'mongoose';
@@ -16,10 +17,12 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const SESSION_SECRET = process.env.SESSION_SECRET || 'change-this-secret';
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
 const isProduction = process.env.NODE_ENV === 'production';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || (isProduction ? '' : bcrypt.hashSync('Admin123!', 10));
 const PUBLIC_DIR = __dirname;
 const RESET_TOKEN_EXPIRES = Number(process.env.RESET_TOKEN_EXPIRES || 3600) * 1000;
+const CATALOG_JSON_PATH = path.join(__dirname, 'assets', 'data', 'catalogo.json');
 
 // ── MongoDB ──────────────────────────────────────────────────────────────────
 const MONGO_URI = process.env.MONGO_URI;
@@ -27,16 +30,27 @@ if (!MONGO_URI) {
   console.error('ERROR: falta la variable de entorno MONGO_URI');
   process.exit(1);
 }
-await mongoose.connect(MONGO_URI);
-console.log('MongoDB conectado');
 
 // Esquema catálogo
-const CatalogSchema = new mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  price: { type: String, default: 'Consultar' },
+  description: { type: String, default: '' },
+  category: { type: String, required: true, index: true },
+  image: { type: String, default: '' },
+  imageAlt: { type: String, default: '' },
+  badge: { type: String, default: '' },
+  whatsappText: { type: String, default: '' },
+  featured: { type: Boolean, default: false }
+}, { collection: 'products', timestamps: true });
+const Product = mongoose.model('Product', ProductSchema);
+
+const CatalogMetaSchema = new mongoose.Schema({
   meta: { type: mongoose.Schema.Types.Mixed, default: {} },
-  categories: { type: [mongoose.Schema.Types.Mixed], default: [] },
-  products: { type: [mongoose.Schema.Types.Mixed], default: [] }
-}, { collection: 'catalogo' });
-const Catalog = mongoose.model('Catalog', CatalogSchema);
+  categories: { type: [mongoose.Schema.Types.Mixed], default: [] }
+}, { collection: 'catalog_meta' });
+const CatalogMeta = mongoose.model('CatalogMeta', CatalogMetaSchema);
 
 // Esquema usuarios
 const UserSchema = new mongoose.Schema({
@@ -67,15 +81,6 @@ const DEFAULT_CATALOG = {
   products: []
 };
 
-// Helper: obtener o crear el documento único de catálogo
-const getCatalogDoc = async () => {
-  let doc = await Catalog.findOne();
-  if (!doc) {
-    doc = await Catalog.create(DEFAULT_CATALOG);
-  }
-  return doc;
-};
-
 // ── Normalización ────────────────────────────────────────────────────────────
 const normalizeProduct = (p = {}) => ({
   id: String(p.id || crypto.randomUUID()),
@@ -102,6 +107,82 @@ const normalizeCatalog = (data = {}) => ({
   categories: (Array.isArray(data.categories) ? data.categories : []).map(normalizeCategory),
   products: (Array.isArray(data.products) ? data.products : []).map(normalizeProduct)
 });
+
+async function seedAdminUser() {
+  const passwordHash = ADMIN_PASSWORD_HASH || bcrypt.hashSync('Admin123!', 10);
+  const existing = await User.findOne({ username: ADMIN_USERNAME });
+
+  if (!existing) {
+    await User.create({
+      username: ADMIN_USERNAME,
+      email: ADMIN_EMAIL,
+      passwordHash
+    });
+    return;
+  }
+
+  const updates = {};
+  if (ADMIN_EMAIL && existing.email !== ADMIN_EMAIL) {
+    updates.email = ADMIN_EMAIL;
+  }
+  if (!existing.passwordHash || existing.passwordHash !== passwordHash) {
+    updates.passwordHash = passwordHash;
+  }
+
+  if (Object.keys(updates).length) {
+    await User.updateOne({ username: ADMIN_USERNAME }, { $set: updates });
+  }
+}
+
+const readSeedCatalog = async () => {
+  const raw = await readFile(CATALOG_JSON_PATH, 'utf8');
+  return JSON.parse(raw);
+};
+
+const deriveCategoriesFromProducts = (products = [], fallbackCategories = []) => {
+  const known = new Map((Array.isArray(fallbackCategories) ? fallbackCategories : []).map((category) => [String(category.name || '').trim().toLowerCase(), normalizeCategory(category)]));
+  const result = [];
+
+  for (const product of products) {
+    const key = String(product.category || '').trim().toLowerCase();
+    if (!key || result.some((category) => category.name.toLowerCase() === key)) {
+      continue;
+    }
+    result.push(known.get(key) || normalizeCategory({ name: product.category, image: '', imageAlt: product.category, description: '' }));
+  }
+
+  return result;
+};
+
+const getCatalogState = async () => {
+  const [metaDoc, products] = await Promise.all([
+    CatalogMeta.findOne().lean(),
+    Product.find().sort({ featured: -1, name: 1 }).lean()
+  ]);
+
+  const meta = metaDoc?.meta || DEFAULT_CATALOG.meta;
+  const storedCategories = Array.isArray(metaDoc?.categories) ? metaDoc.categories : [];
+  const categories = storedCategories.length ? storedCategories : deriveCategoriesFromProducts(products, DEFAULT_CATALOG.categories);
+
+  return { meta, categories, products };
+};
+
+async function seedCatalogIfEmpty() {
+  const count = await Product.countDocuments();
+  if (count > 0) {
+    return;
+  }
+
+  const seed = normalizeCatalog(await readSeedCatalog());
+  if (seed.products.length) {
+    await Product.insertMany(seed.products);
+  }
+
+  await CatalogMeta.updateOne({}, { $set: { meta: seed.meta, categories: seed.categories } }, { upsert: true });
+}
+
+await seedAdminUser();
+await seedCatalogIfEmpty();
 
 // ── Nodemailer ───────────────────────────────────────────────────────────────
 let mailTransport = null;
@@ -140,6 +221,20 @@ const ensureAdminAuth = (req, res, next) => {
 
 // ── Rutas API ────────────────────────────────────────────────────────────────
 
+const bootstrapMongo = async () => {
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log('MongoDB conectado');
+    await seedAdminUser();
+    await seedCatalogIfEmpty();
+  } catch (error) {
+    console.error('ERROR: no se pudo inicializar MongoDB', error?.message || error);
+    process.exit(1);
+  }
+};
+
+await bootstrapMongo();
+
 // Health
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, time: new Date().toISOString(), db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
@@ -147,7 +242,8 @@ app.get('/api/health', (_req, res) => {
 
 // Sesión
 app.get('/api/auth/session', (req, res) => {
-  res.json({ loggedIn: Boolean(req.session?.adminLoggedIn), username: req.session?.adminUser || null });
+  const authenticated = Boolean(req.session?.adminLoggedIn);
+  res.json({ authenticated, loggedIn: authenticated, username: req.session?.adminUser || null });
 });
 
 // Login
@@ -219,10 +315,40 @@ app.post('/api/auth/reset', async (req, res) => {
 // GET catálogo (público)
 app.get('/api/catalogo', async (_req, res) => {
   try {
-    const doc = await getCatalogDoc();
-    res.json({ meta: doc.meta, categories: doc.categories, products: doc.products });
+    const catalog = await getCatalogState();
+    res.json(catalog);
   } catch (e) {
     res.status(500).json({ error: 'Error leyendo catálogo' });
+  }
+});
+
+app.get('/api/products', async (_req, res) => {
+  try {
+    const products = await Product.find().sort({ featured: -1, name: 1 }).lean();
+    res.json(products);
+  } catch (e) {
+    res.status(500).json({ error: 'Error leyendo productos' });
+  }
+});
+
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findOne({ id: String(req.params.id || '') }).lean();
+    if (!product) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.json(product);
+  } catch (e) {
+    res.status(500).json({ error: 'Error leyendo producto' });
+  }
+});
+
+app.get('/api/categories', async (_req, res) => {
+  try {
+    const catalog = await getCatalogState();
+    res.json(catalog.categories);
+  } catch (e) {
+    res.status(500).json({ error: 'Error leyendo categorías' });
   }
 });
 
@@ -230,7 +356,11 @@ app.get('/api/catalogo', async (_req, res) => {
 app.put('/api/catalogo', ensureAdminAuth, async (req, res) => {
   try {
     const normalized = normalizeCatalog(req.body);
-    await Catalog.findOneAndUpdate({}, normalized, { upsert: true, new: true });
+    await CatalogMeta.updateOne({}, { $set: { meta: normalized.meta, categories: normalized.categories } }, { upsert: true });
+    await Product.deleteMany({});
+    if (normalized.products.length) {
+      await Product.insertMany(normalized.products);
+    }
     res.json({ ok: true, catalog: normalized });
   } catch (e) {
     res.status(500).json({ error: 'Error guardando catálogo' });

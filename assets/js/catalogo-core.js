@@ -1,5 +1,18 @@
 (() => {
-  const DATA_URL = './api/catalogo';
+  const API_BASE = (() => {
+    if (window.API_BASE_URL && String(window.API_BASE_URL).trim()) {
+      return String(window.API_BASE_URL).trim().replace(/\/$/, '');
+    }
+
+    if (window.location?.protocol === 'file:') {
+      return 'http://localhost:3000';
+    }
+
+    return '';
+  })();
+  const DATA_URL = `${API_BASE}/api/catalogo`;
+  const PRODUCTS_URL = `${API_BASE}/api/products`;
+  const CATEGORIES_URL = `${API_BASE}/api/categories`;
   const PHONE_NUMBER = '5116931840';
 
   const placeholderImage = (label, size = '1200x900') => {
@@ -231,14 +244,53 @@
 
   const loadCatalog = async () => {
     try {
-      const response = await fetch(DATA_URL, { cache: 'no-store' });
+      const [productsResponse, categoriesResponse] = await Promise.all([
+        fetch(PRODUCTS_URL, { cache: 'no-store' }),
+        fetch(CATEGORIES_URL, { cache: 'no-store' })
+      ]);
+
+      if (!productsResponse.ok || !categoriesResponse.ok) {
+        throw new Error('HTTP error');
+      }
+
+      const [productsRaw, categoriesRaw] = await Promise.all([
+        productsResponse.json(),
+        categoriesResponse.json()
+      ]);
+
+      const categories = Array.isArray(categoriesRaw)
+        ? categoriesRaw.map((category, index) => normalizeCategory(category, index))
+        : DEFAULT_DATA.categories;
+
+      const products = Array.isArray(productsRaw)
+        ? productsRaw.map((product, index) => normalizeProduct(product, index))
+        : DEFAULT_DATA.products;
+
+      return {
+        meta: DEFAULT_DATA.meta,
+        categories,
+        products
+      };
+    } catch {
+      return normalizeCatalog(DEFAULT_DATA);
+    }
+  };
+
+  const loadProductById = async (id) => {
+    if (!id) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/products/${encodeURIComponent(id)}`, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
+
       const raw = await response.json();
-      return normalizeCatalog(raw);
+      return normalizeProduct(raw, 0);
     } catch {
-      return normalizeCatalog(DEFAULT_DATA);
+      return null;
     }
   };
 
@@ -310,6 +362,7 @@
     saveCatalog,
     clearCatalog,
     downloadCatalog,
+    loadProductById,
     whatsappUrl,
     findCategory,
     resolveProductImage,

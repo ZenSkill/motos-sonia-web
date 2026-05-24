@@ -2,7 +2,7 @@
 
 Sitio web estático con backend simple en Node.js para catálogo y panel de administración con sesión real.
 
-## Arranque rápido
+## Arranque local
 
 1. Instala dependencias:
 
@@ -10,19 +10,43 @@ Sitio web estático con backend simple en Node.js para catálogo y panel de admi
 npm install
 ```
 
-2. Si quieres usar credenciales propias, copia `.env.example` a `.env` y cambia los valores.
+1. Copia `.env.example` a `.env` y completa los valores, especialmente `MONGO_URI`.
 
-3. Genera un hash para la contraseña si lo necesitas:
+1. Asegúrate de que tu URI apunte a la base `mototaxi_db`:
 
-```bash
-npm run hash-password -- "TuClaveSegura"
+```text
+MONGO_URI=mongodb+srv://USUARIO:PASSWORD@cluster.mongodb.net/mototaxi_db?retryWrites=true&w=majority&appName=catalogo-motos
 ```
 
-4. Inicia el servidor:
+1. Inicia el servidor:
 
 ```bash
 npm start
 ```
+
+## Datos y seed
+
+Al arrancar, si la colección `products` está vacía, el servidor carga automáticamente el catálogo inicial desde [assets/data/catalogo.json](assets/data/catalogo.json).
+
+## Variables de entorno
+
+- `PORT`: puerto del servidor.
+- `SESSION_SECRET`: secreto de sesión de Express.
+- `ADMIN_USERNAME`: usuario del panel.
+- `ADMIN_PASSWORD_HASH`: hash bcrypt del password del panel.
+- `ADMIN_EMAIL`: email del admin para recuperación de contraseña.
+- `MONGO_URI`: conexión a MongoDB Atlas con la base `mototaxi_db`.
+- `SMTP_*`: credenciales para correo de recuperación.
+- `FRONTEND_URL`: URL pública usada en enlaces de reset.
+- `RESET_TOKEN_EXPIRES`: tiempo de vida del token en segundos.
+
+## Endpoints del catálogo
+
+- `GET /api/products` devuelve todos los productos.
+- `GET /api/products/:id` devuelve un producto por `id`.
+- `GET /api/categories` devuelve las categorías.
+- `GET /api/catalogo` devuelve el catálogo completo por compatibilidad.
+- `PUT /api/catalogo` guarda el catálogo completo y requiere sesión autenticada.
 
 ## Acceso de desarrollo
 
@@ -31,32 +55,26 @@ Si no defines `ADMIN_PASSWORD_HASH`, el servidor usa estas credenciales solo en 
 - Usuario: `admin`
 - Contraseña: `Admin123!`
 
-## Rutas
-
-- `GET /api/catalogo` consulta el catálogo.
-- `POST /api/auth/login` inicia sesión.
-- `POST /api/auth/logout` cierra la sesión.
-- `GET /api/auth/session` verifica la sesión activa.
-- `PUT /api/catalogo` guarda el catálogo completo y requiere sesión autenticada.
-
 ## Cloudinary (subida de imágenes desde Admin)
 
 Recomendado: usar un *unsigned upload preset* para subir imágenes directamente desde `admin.html` al Cloudinary sin pasar las credenciales por el navegador.
 
 Pasos:
-1. Crea una cuenta en Cloudinary y ve a la sección *Settings > Upload*.
-2. Crea un *Upload preset* y marca *Unsigned*.
-3. En `admin.html` añade las variables globales en un bloque `<script>` cerca del final de la página:
+
+1. Crea una cuenta en Cloudinary y ve a *Settings > Upload*.
+1. Crea un *Upload preset* y márcalo como *Unsigned*.
+1. En `admin.html` define las variables globales:
 
 ```html
 <script>
-	window.CLOUDINARY_CLOUD = 'tu_cloud_name';
-	window.CLOUDINARY_PRESET = 'tu_unsigned_preset';
+  window.CLOUDINARY_CLOUD = 'tu_cloud_name';
+  window.CLOUDINARY_PRESET = 'tu_unsigned_preset';
 </script>
 ```
 
-4. En el admin usa el campo de archivo y el botón *Subir a Cloudinary*; al subir, el `secure_url` resultante se escribe en el campo `Ruta de imagen`.
+1. En el admin usa el archivo y el botón *Subir a Cloudinary*; el `secure_url` se escribe en el campo de imagen.
 
 Notas de seguridad:
-- El preset *unsigned* no requiere clave, pero restringe transformaciones desde el lado del servidor si configuras firmas.
-- Para mayor seguridad, considera implementar un endpoint que firme uploads (server-side) y usar uploads firmados.
+
+- El preset unsigned es práctico, pero limita qué puedes subir desde el cliente.
+- Si quieres mayor control, luego podemos cambiar a uploads firmados desde el backend.
