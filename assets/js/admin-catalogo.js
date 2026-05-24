@@ -34,17 +34,35 @@
     return '';
   })();
 
-  const CLOUDINARY_CLOUD = window.CLOUDINARY_CLOUD || null; // set in admin.html if available
-  const CLOUDINARY_PRESET = window.CLOUDINARY_PRESET || null; // unsigned preset
+  const CLOUDINARY_CLOUD = window.CLOUDINARY_CLOUD || null; // optional: not required when using server-signed uploads
+  const CLOUDINARY_PRESET = window.CLOUDINARY_PRESET || null; // unsigned preset (unused with signed flow)
 
   const uploadToCloudinary = async (file) => {
     if (!file) throw new Error('No file');
-    if (!CLOUDINARY_CLOUD || !CLOUDINARY_PRESET) throw new Error('Cloudinary not configured');
 
-    const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`;
+    // Request a server-signed signature for the upload
+    const signResp = await fetch(`${API_BASE}/api/uploads/sign`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ filename: file.name, size: file.size, contentType: file.type, folder: 'motos-sonia' })
+    });
+
+    if (!signResp.ok) {
+      const err = await signResp.json().catch(() => ({}));
+      throw new Error(err.error || 'Could not get upload signature');
+    }
+
+    const { signature, timestamp, api_key, cloud, folder } = await signResp.json();
+    // prefer server-provided cloud name; fall back to optional global
+    const cloudName = cloud || CLOUDINARY_CLOUD;
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
     const fd = new FormData();
     fd.append('file', file);
-    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('api_key', api_key);
+    fd.append('timestamp', timestamp);
+    fd.append('signature', signature);
+    if (folder) fd.append('folder', folder);
 
     const resp = await fetch(url, { method: 'POST', body: fd });
     if (!resp.ok) throw new Error('Upload failed');
@@ -241,7 +259,6 @@
     }
 
     const payload = core.normalizeCatalog(state.catalog);
-    const result = await apiFetch('./api/catalogo', {
     const result = await apiFetch('/api/catalogo', {
       method: 'PUT',
       body: JSON.stringify(payload)
@@ -352,7 +369,6 @@
     }
 
     try {
-      await apiFetch('./api/auth/login', {
       await apiFetch('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({ username, password })
@@ -370,7 +386,6 @@
 
   const logout = async () => {
     try {
-      await apiFetch('./api/auth/logout', { method: 'POST' });
       await apiFetch('/api/auth/logout', { method: 'POST' });
     } catch {
       // Ignore logout errors.
