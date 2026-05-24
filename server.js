@@ -1,12 +1,13 @@
+import 'dotenv/config';
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
 import bcrypt from 'bcryptjs';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 import nodemailer from 'nodemailer';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,11 +18,43 @@ const SESSION_SECRET = process.env.SESSION_SECRET || 'change-this-secret';
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
 const isProduction = process.env.NODE_ENV === 'production';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || (isProduction ? '' : bcrypt.hashSync('Admin123!', 10));
-const DATA_FILE = path.join(__dirname, 'assets', 'data', 'catalogo.json');
 const PUBLIC_DIR = __dirname;
-const DATA_DIR = path.join(__dirname, 'data');
-const STORE_FILE = path.join(DATA_DIR, 'store.json');
+const RESET_TOKEN_EXPIRES = Number(process.env.RESET_TOKEN_EXPIRES || 3600) * 1000;
 
+// ── MongoDB ──────────────────────────────────────────────────────────────────
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error('ERROR: falta la variable de entorno MONGO_URI');
+  process.exit(1);
+}
+await mongoose.connect(MONGO_URI);
+console.log('MongoDB conectado');
+
+// Esquema catálogo
+const CatalogSchema = new mongoose.Schema({
+  meta: { type: mongoose.Schema.Types.Mixed, default: {} },
+  categories: { type: [mongoose.Schema.Types.Mixed], default: [] },
+  products: { type: [mongoose.Schema.Types.Mixed], default: [] }
+}, { collection: 'catalogo' });
+const Catalog = mongoose.model('Catalog', CatalogSchema);
+
+// Esquema usuarios
+const UserSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+  email: { type: String, default: '' }
+}, { collection: 'users' });
+const User = mongoose.model('User', UserSchema);
+
+// Esquema tokens de reset
+const ResetTokenSchema = new mongoose.Schema({
+  token: { type: String, required: true, unique: true },
+  username: { type: String, required: true },
+  expiresAt: { type: Date, required: true }
+}, { collection: 'resetTokens' });
+const ResetToken = mongoose.model('ResetToken', ResetTokenSchema);
+
+// Valor por defecto del catálogo
 const DEFAULT_CATALOG = {
   meta: {
     hero: {
@@ -34,6 +67,54 @@ const DEFAULT_CATALOG = {
   products: []
 };
 
+// Helper: obtener o crear el documento único de catálogo
+const getCatalogDoc = async () => {
+  let doc = await Catalog.findOne();
+  if (!doc) {
+    doc = await Catalog.create(DEFAULT_CATALOG);
+  }
+  return doc;
+};
+
+// ── Normalización ────────────────────────────────────────────────────────────
+const normalizeProduct = (p = {}) => ({
+  id: String(p.id || crypto.randomUUID()),
+  name: String(p.name || '').trim(),
+  price: String(p.price || '').trim(),
+  description: String(p.description || '').trim(),
+  category: String(p.category || '').trim(),
+  image: String(p.image || '').trim(),
+  imageAlt: String(p.imageAlt || '').trim(),
+  badge: String(p.badge || '').trim(),
+  whatsappText: String(p.whatsappText || '').trim(),
+  featured: Boolean(p.featured)
+});
+
+const normalizeCategory = (c = {}) => ({
+  name: String(c.name || '').trim(),
+  image: String(c.image || '').trim(),
+  imageAlt: String(c.imageAlt || '').trim(),
+  description: String(c.description || '').trim()
+});
+
+const normalizeCatalog = (data = {}) => ({
+  meta: data.meta || DEFAULT_CATALOG.meta,
+  categories: (Array.isArray(data.categories) ? data.categories : []).map(normalizeCategory),
+  products: (Array.isArray(data.products) ? data.products : []).map(normalizeProduct)
+});
+
+// ── Nodemailer ───────────────────────────────────────────────────────────────
+let mailTransport = null;
+if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  mailTransport = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 465),
+    secure: String(process.env.SMTP_SECURE) === 'true',
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+  });
+}
+
+// ── Middlewares ──────────────────────────────────────────────────────────────
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
@@ -45,278 +126,121 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: false,
-    maxAge: 1000 * 60 * 60 * 4
+    secure: isProduction,
+    maxAge: 8 * 60 * 60 * 1000
   }
 }));
+app.use(express.static(PUBLIC_DIR));
 
-app.use(express.static(PUBLIC_DIR, {
-  extensions: ['html']
-}));
+// ── Auth middleware ──────────────────────────────────────────────────────────
+const ensureAdminAuth = (req, res, next) => {
+  if (req.session?.adminLoggedIn) return next();
+  res.status(401).json({ error: 'No autenticado' });
+};
 
-// Ensure data dir exists
-await mkdir(DATA_DIR, { recursive: true });
+// ── Rutas API ────────────────────────────────────────────────────────────────
 
-// Simple JSON store for users and reset tokens
-const readStore = async () => {
+// Health
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, time: new Date().toISOString(), db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+});
+
+// Sesión
+app.get('/api/auth/session', (req, res) => {
+  res.json({ loggedIn: Boolean(req.session?.adminLoggedIn), username: req.session?.adminUser || null });
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
   try {
-    const raw = await readFile(STORE_FILE, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return { users: [], resetTokens: [] };
+    const { username, password } = req.body || {};
+    if (!username || !password) return res.status(400).json({ error: 'Faltan credenciales' });
+    if (username !== ADMIN_USERNAME) return res.status(401).json({ error: 'Credenciales incorrectas' });
+    if (!ADMIN_PASSWORD_HASH) return res.status(500).json({ error: 'Sin hash configurado' });
+    const ok = await bcrypt.compare(String(password), ADMIN_PASSWORD_HASH);
+    if (!ok) return res.status(401).json({ error: 'Credenciales incorrectas' });
+    req.session.adminLoggedIn = true;
+    req.session.adminUser = username;
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Error interno' });
   }
-};
+});
 
-const writeStore = async (store) => {
-  await writeFile(STORE_FILE, JSON.stringify(store, null, 2) + '\n', 'utf8');
-};
+// Logout
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy(() => res.json({ ok: true }));
+});
 
-const findUserByUsername = async (username) => {
-  const store = await readStore();
-  return store.users.find(u => u.username === username) || null;
-};
-
-const findUserByEmail = async (email) => {
-  const store = await readStore();
-  return store.users.find(u => u.email === email) || null;
-};
-
-const createUser = async (username, email, passwordHash) => {
-  const store = await readStore();
-  const id = store.users.length ? Math.max(...store.users.map(u => u.id || 0)) + 1 : 1;
-  const user = { id, username, email: email || null, passwordHash, createdAt: Date.now() };
-  store.users.push(user);
-  await writeStore(store);
-  return user;
-};
-
-// Create admin user if missing
-let adminUser = await findUserByUsername(ADMIN_USERNAME);
-if (!adminUser) {
-  const hash = ADMIN_PASSWORD_HASH || bcrypt.hashSync('Admin123!', 10);
-  adminUser = await createUser(ADMIN_USERNAME, null, hash);
-}
-
-// Nodemailer transport (optional)
-let mailTransport = null;
-if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-  mailTransport = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE) === 'true',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
-}
-
-const safeReadJson = async (filePath, fallback) => {
+// Forgot password
+app.post('/api/auth/forgot', async (req, res) => {
   try {
-    const raw = await readFile(filePath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return fallback;
-  }
-};
-
-const slugify = (value) => {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
-
-const normalizeProduct = (product = {}, index = 0) => {
-  const name = String(product.name || product.title || `Producto ${index + 1}`).trim();
-  const category = String(product.category || 'General').trim();
-
-  return {
-    id: String(product.id || slugify(`${category}-${name}`) || `producto-${index + 1}`),
-    name,
-    price: String(product.price || 'Consultar').trim(),
-    description: String(product.description || '').trim(),
-    category,
-    image: String(product.image || '').trim(),
-    imageAlt: String(product.imageAlt || name).trim(),
-    badge: String(product.badge || '').trim(),
-    whatsappText: String(product.whatsappText || `Hola Motos Sonia, quiero consultar por ${name}`).trim(),
-    featured: Boolean(product.featured)
-  };
-};
-
-const normalizeCategory = (category = {}, index = 0) => {
-  const name = String(category.name || category.category || `Categoría ${index + 1}`).trim();
-  return {
-    id: String(category.id || slugify(name) || `categoria-${index + 1}`),
-    name,
-    image: String(category.image || '').trim(),
-    imageAlt: String(category.imageAlt || name).trim(),
-    description: String(category.description || '').trim()
-  };
-};
-
-const normalizeCatalog = (catalog) => {
-  const source = catalog && typeof catalog === 'object' ? catalog : {};
-  const heroSource = source.meta?.hero || source.hero || DEFAULT_CATALOG.meta.hero;
-
-  return {
-    meta: {
-      hero: {
-        eyebrow: String(heroSource.eyebrow || DEFAULT_CATALOG.meta.hero.eyebrow),
-        title: String(heroSource.title || DEFAULT_CATALOG.meta.hero.title),
-        description: String(heroSource.description || DEFAULT_CATALOG.meta.hero.description)
-      }
-    },
-    categories: (Array.isArray(source.categories) && source.categories.length ? source.categories : DEFAULT_CATALOG.categories).map(normalizeCategory),
-    products: (Array.isArray(source.products) && source.products.length ? source.products : DEFAULT_CATALOG.products).map(normalizeProduct)
-  };
-};
-
-const ensureAdminAuth = (request, response, next) => {
-  if (request.session?.admin?.authenticated) {
-    return next();
-  }
-
-  return response.status(401).json({ ok: false, message: 'No autorizado' });
-};
-
-app.get('/api/auth/session', (request, response) => {
-  if (request.session?.admin?.authenticated) {
-    return response.json({ ok: true, authenticated: true, username: request.session.admin.username });
-  }
-
-  return response.json({ ok: true, authenticated: false });
-});
-
-app.post('/api/auth/login', async (request, response) => {
-  const username = String(request.body?.username || '').trim();
-  const password = String(request.body?.password || '');
-
-  if (!username || !password) {
-    return response.status(400).json({ ok: false, message: 'Faltan credenciales' });
-  }
-
-  if (!ADMIN_PASSWORD_HASH) {
-    return response.status(500).json({ ok: false, message: 'Falta configurar ADMIN_PASSWORD_HASH' });
-  }
-
-  const user = findUserByUsername(username);
-  if (!user) {
-    return response.status(401).json({ ok: false, message: 'Credenciales incorrectas' });
-  }
-
-  const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-
-  if (!usernameMatches || !passwordMatches) {
-    return response.status(401).json({ ok: false, message: 'Credenciales incorrectas' });
-  }
-
-  request.session.admin = {
-    authenticated: true,
-    username: user.username,
-    userId: user.id
-  };
-
-  return response.json({ ok: true, authenticated: true, username: ADMIN_USERNAME });
-});
-
-app.post('/api/auth/logout', (request, response) => {
-  request.session.destroy(() => {
-    response.clearCookie('motos-sonia-admin');
-    response.json({ ok: true });
-  });
-});
-
-app.get('/api/catalogo', async (_request, response) => {
-  const catalog = normalizeCatalog(await safeReadJson(DATA_FILE, DEFAULT_CATALOG));
-  response.json(catalog);
-});
-
-app.put('/api/catalogo', ensureAdminAuth, async (request, response) => {
-  const normalized = normalizeCatalog(request.body);
-  await writeFile(DATA_FILE, `${JSON.stringify(normalized, null, 2)}\n`, 'utf8');
-  response.json({ ok: true, catalog: normalized });
-});
-
-// Password reset: request token
-app.post('/api/auth/forgot', async (request, response) => {
-  const email = String(request.body?.email || '').trim().toLowerCase();
-  if (!email) return response.status(400).json({ ok: false, message: 'Proporciona un email' });
-
-  const user = await findUserByEmail(email);
-  if (!user) return response.json({ ok: true, message: 'Si el email existe, enviaremos instrucciones' });
-
-  const token = crypto.randomBytes(32).toString('hex');
-  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-  const expires = Date.now() + (Number(process.env.RESET_TOKEN_EXPIRES || 3600) * 1000);
-
-  const store = await readStore();
-  const id = store.resetTokens.length ? Math.max(...store.resetTokens.map(t => t.id || 0)) + 1 : 1;
-  store.resetTokens.push({ id, userId: user.id, tokenHash, expiresAt: expires, createdAt: Date.now() });
-  await writeStore(store);
-
-  const front = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
-  const resetLink = `${front}/admin/reset.html?token=${token}`;
-
-  if (mailTransport) {
-    try {
+    const { email } = req.body || {};
+    if (!email) return res.status(400).json({ error: 'Falta el email' });
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.json({ ok: true }); // No revelar si existe
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_EXPIRES);
+    await ResetToken.deleteMany({ username: user.username });
+    await ResetToken.create({ token, username: user.username, expiresAt });
+    if (mailTransport) {
+      const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:' + PORT}/admin.html?reset=${token}`;
       await mailTransport.sendMail({
-        from: `"Motos Sonia" <${process.env.SMTP_USER}>`,
+        from: process.env.SMTP_USER,
         to: email,
-        subject: 'Restablecer contraseña',
-        html: `<p>Haz clic en el enlace para restablecer tu contraseña (válido 1 hora): <a href="${resetLink}">${resetLink}</a></p>`
+        subject: 'Restablecer contraseña - Motos Sonia',
+        html: `<p>Usa este enlace para restablecer tu contraseña (expira en 1 hora):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`
       });
-    } catch (err) {
-      console.error('Mail send error', err);
     }
-    return response.json({ ok: true, message: 'Instrucciones enviadas si el correo existe' });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Error interno' });
   }
-
-  // Dev fallback: return token in response (ONLY dev)
-  return response.json({ ok: true, token, message: 'SMTP no configurado - token dev retornado' });
 });
 
-// Password reset: verify token and set new password
-app.post('/api/auth/reset', async (request, response) => {
-  const token = String(request.body?.token || '').trim();
-  const password = String(request.body?.password || '');
-
-  if (!token || !password) return response.status(400).json({ ok: false, message: 'Faltan datos' });
-
-  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-  const store = await readStore();
-  const row = store.resetTokens.find(t => t.tokenHash === tokenHash) || null;
-  if (!row) return response.status(400).json({ ok: false, message: 'Token inválido o usado' });
-  if (Date.now() > row.expiresAt) {
-    store.resetTokens = store.resetTokens.filter(t => t.id !== row.id);
-    await writeStore(store);
-    return response.status(400).json({ ok: false, message: 'Token expirado' });
+// Reset password
+app.post('/api/auth/reset', async (req, res) => {
+  try {
+    const { token, password } = req.body || {};
+    if (!token || !password) return res.status(400).json({ error: 'Faltan datos' });
+    const record = await ResetToken.findOne({ token });
+    if (!record || record.expiresAt < new Date()) {
+      return res.status(400).json({ error: 'Token inválido o expirado' });
+    }
+    const hash = await bcrypt.hash(String(password), 10);
+    await User.findOneAndUpdate({ username: record.username }, { passwordHash: hash });
+    await ResetToken.deleteOne({ token });
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Error interno' });
   }
-
-  const hashed = await bcrypt.hash(password, 10);
-  store.users = store.users.map(u => u.id === row.userId ? { ...u, passwordHash: hashed } : u);
-  store.resetTokens = store.resetTokens.filter(t => t.id !== row.id);
-  await writeStore(store);
-
-  return response.json({ ok: true, message: 'Contraseña actualizada' });
 });
 
-app.get('/api/health', (_request, response) => {
-  response.json({ ok: true });
-});
-
-app.use((error, _request, response, _next) => {
-  console.error(error);
-  response.status(500).json({ ok: false, message: 'Error interno del servidor' });
-});
-
-app.listen(PORT, () => {
-  if (!process.env.ADMIN_PASSWORD_HASH) {
-    console.warn('Using development admin credentials: admin / Admin123!');
+// GET catálogo (público)
+app.get('/api/catalogo', async (_req, res) => {
+  try {
+    const doc = await getCatalogDoc();
+    res.json({ meta: doc.meta, categories: doc.categories, products: doc.products });
+  } catch (e) {
+    res.status(500).json({ error: 'Error leyendo catálogo' });
   }
-
-  console.log(`Motos Sonia backend running on http://localhost:${PORT}`);
 });
+
+// PUT catálogo (solo admin)
+app.put('/api/catalogo', ensureAdminAuth, async (req, res) => {
+  try {
+    const normalized = normalizeCatalog(req.body);
+    await Catalog.findOneAndUpdate({}, normalized, { upsert: true, new: true });
+    res.json({ ok: true, catalog: normalized });
+  } catch (e) {
+    res.status(500).json({ error: 'Error guardando catálogo' });
+  }
+});
+
+// Fallback SPA
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// ── Inicio ───────────────────────────────────────────────────────────────────
+app.listen(PORT, () => console.log(`Servidor Motos Sonia en http://localhost:${PORT}`));
