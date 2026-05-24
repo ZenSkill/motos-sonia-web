@@ -1247,6 +1247,102 @@ h1, h2, h3, p, .lead, .card-tag { word-break: break-word; overflow-wrap: break-w
 }
 
 /* Panel admin */
+.admin-page {
+  background:
+    radial-gradient(circle at top left, rgba(31, 90, 74, 0.18), transparent 34%),
+    radial-gradient(circle at top right, rgba(208, 138, 47, 0.16), transparent 30%),
+    linear-gradient(180deg, #f5f3ee 0%, #ece8df 100%);
+}
+
+.admin-hero {
+  padding-top: 60px;
+}
+
+.admin-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.admin-hero-copy,
+.admin-access-card {
+  border-radius: calc(var(--radius) + 4px);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82));
+  box-shadow: var(--shadow);
+  padding: 28px;
+}
+
+.admin-hero-copy {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.admin-hero-copy .hero-actions,
+.admin-access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.catalog-note {
+  margin-top: 10px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(31, 90, 74, 0.08);
+  color: var(--primary-dark);
+}
+
+.admin-access-card {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-access-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -24px -24px auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(208, 138, 47, 0.18), transparent 68%);
+  pointer-events: none;
+}
+
+.admin-access-form {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-access-form .admin-field span {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.admin-access-message {
+  margin: 0;
+  min-height: 1.4em;
+  color: var(--muted);
+}
+
+.admin-access-message.is-error {
+  color: #9f3a2f;
+}
+
+.admin-access-message.is-success {
+  color: var(--primary-dark);
+}
+
+.admin-app[hidden] {
+  display: none !important;
+}
+
 .admin-shell {
   display: grid;
   grid-template-columns: 0.95fr 1.05fr;
@@ -1330,6 +1426,13 @@ h1, h2, h3, p, .lead, .card-tag { word-break: break-word; overflow-wrap: break-w
   border-radius: 18px;
   background: #fff;
   border: 1px solid var(--line);
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.admin-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(31, 90, 74, 0.22);
+  box-shadow: 0 18px 40px rgba(23, 33, 43, 0.10);
 }
 
 .admin-item h3 {
@@ -1363,6 +1466,7 @@ h1, h2, h3, p, .lead, .card-tag { word-break: break-word; overflow-wrap: break-w
 }
 
 @media (max-width: 980px) {
+  .admin-hero-grid { grid-template-columns: 1fr; }
   .hero-grid { grid-template-columns: 1fr; }
   .product-layout { grid-template-columns: 1fr; }
   .cards-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }

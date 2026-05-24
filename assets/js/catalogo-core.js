@@ -1,6 +1,5 @@
 (() => {
-  const STORAGE_KEY = 'motos-sonia-catalogo-v3';
-  const DATA_URL = './assets/data/catalogo.json?v=2';
+  const DATA_URL = './api/catalogo';
   const PHONE_NUMBER = '5116931840';
 
   const placeholderImage = (label, size = '1200x900') => {
@@ -171,24 +170,6 @@
     }
   };
 
-  const readStorage = () => {
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      return raw ? safeParse(raw, null) : null;
-    } catch {
-      return null;
-    }
-  };
-
-  const writeStorage = (data) => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const normalizeHero = (hero = {}) => {
     const defaultHero = DEFAULT_DATA.meta.hero;
     return {
@@ -249,11 +230,6 @@
   };
 
   const loadCatalog = async () => {
-    const stored = readStorage();
-    if (stored) {
-      return normalizeCatalog(stored);
-    }
-
     try {
       const response = await fetch(DATA_URL, { cache: 'no-store' });
       if (!response.ok) {
@@ -267,17 +243,11 @@
   };
 
   const saveCatalog = (catalog) => {
-    const normalized = normalizeCatalog(catalog);
-    writeStorage(normalized);
-    return normalized;
+    return normalizeCatalog(catalog);
   };
 
   const clearCatalog = () => {
-    try {
-      window.localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // No-op.
-    }
+    return true;
   };
 
   const downloadCatalog = (catalog) => {
@@ -335,7 +305,6 @@
   };
 
   window.MotosSoniaCatalogoCore = {
-    storageKey: STORAGE_KEY,
     defaultData: DEFAULT_DATA,
     loadCatalog,
     saveCatalog,

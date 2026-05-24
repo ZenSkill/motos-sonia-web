@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="./assets/css/styles.css" />
   <link rel="icon" href="./assets/icons/logo_favicon.png" />
 </head>
-<body>
+<body class="admin-page">
   <header class="site-header">
     <div class="container nav-wrap">
       <a href="./index.html" class="brand" aria-label="Motos Sonia inicio">
@@ -30,22 +30,45 @@
   </header>
 
   <main id="contenido">
-    <section class="page-hero section">
-      <div class="container narrow">
-        <p class="eyebrow">Panel interno</p>
-        <h1>Administrar catálogo desde un solo formulario.</h1>
-        <p>Agrega, edita, elimina, importa y exporta productos. El panel guarda cambios localmente y te permite descargar el archivo <strong>catalogo.json</strong> listo para publicar.</p>
-        <div class="hero-actions">
-          <button class="button button-whatsapp" type="button" id="catalogAdminExport">Exportar JSON</button>
-          <a class="button button-secondary" href="./catalogo.html">Ver catálogo</a>
+    <section class="section admin-hero">
+      <div class="container admin-hero-grid">
+        <div class="admin-hero-copy">
+          <p class="eyebrow">Panel interno</p>
+          <h1>Catálogo bajo control, con una interfaz más clara para editar rápido.</h1>
+          <p class="lead">Agrega, edita, elimina, importa y exporta productos desde un panel pensado para trabajo diario. El catálogo se guarda localmente y puedes descargar <strong>catalogo.json</strong> cuando termines.</p>
+          <div class="hero-actions">
+            <button class="button button-whatsapp" type="button" id="catalogAdminExport">Exportar JSON</button>
+            <a class="button button-secondary" href="./catalogo.html">Ver catálogo</a>
+          </div>
+          <div class="catalog-note">
+            <strong>Nota operativa:</strong> para acceso rápido se usa una sesión local en el navegador. Si quieres seguridad real, esto debe moverse a autenticación de servidor.
+          </div>
         </div>
-        <div class="catalog-note">
-          <strong>Importante:</strong> las portadas por defecto salen de <code>img/categorias/</code>. Si un producto no tiene foto propia, el catálogo usará la imagen de su categoría.
-        </div>
+
+        <aside class="admin-access-card" aria-labelledby="adminAccessTitle">
+          <p class="eyebrow">Acceso privado</p>
+          <h2 id="adminAccessTitle">Entrar al panel</h2>
+          <p>Introduce tu usuario y contraseña para habilitar la edición. La sesión queda protegida por cookie HTTP-only.</p>
+          <form class="admin-access-form" id="adminAccessForm">
+            <label class="admin-field" for="adminAccessUsername">
+              <span>Usuario</span>
+              <input id="adminAccessUsername" type="text" autocomplete="username" placeholder="Escribe tu usuario" />
+            </label>
+            <label class="admin-field" for="adminAccessPassword">
+              <span>Contraseña</span>
+              <input id="adminAccessPassword" type="password" autocomplete="current-password" placeholder="Escribe tu contraseña" />
+            </label>
+            <div class="admin-access-actions">
+              <button class="button button-whatsapp" type="submit">Desbloquear</button>
+              <button class="button button-secondary" type="button" id="adminAccessLogout" hidden>Cerrar sesión</button>
+            </div>
+          </form>
+          <p class="admin-access-message" id="adminAccessMessage" role="status" aria-live="polite"></p>
+        </aside>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section admin-app" data-admin-app hidden>
       <div class="container admin-shell">
         <div class="admin-panel">
           <div class="section-head">
@@ -87,7 +110,11 @@
             <div class="admin-grid-two">
               <div class="admin-field">
                 <label for="catalogAdminImage">Ruta de imagen</label>
-                <input id="catalogAdminImage" type="text" placeholder="Ej. ./img/catalogo/mototaxis/urbana-plus.jpg" />
+                  <input id="catalogAdminImage" type="text" placeholder="Ej. https://res.cloudinary.com/..." />
+                  <div class="admin-image-upload">
+                    <input id="catalogAdminImageFile" type="file" accept="image/*" />
+                    <button class="button button-secondary" type="button" id="catalogAdminUploadImage">Subir a Cloudinary</button>
+                  </div>
               </div>
               <div class="admin-field">
                 <label for="catalogAdminImageAlt">Texto alternativo</label>
@@ -160,7 +187,7 @@
 
   <script src="./assets/js/main.js?v=4" defer></script>
   <script src="./assets/js/catalogo-core.js?v=4" defer></script>
-  <script src="./assets/js/admin-catalogo.js?v=2" defer></script>
+  <script src="./assets/js/admin-catalogo.js?v=3" defer></script>
   <script>
     document.getElementById('catalogAdminImportButton')?.addEventListener('click', () => {
       document.getElementById('catalogAdminImport')?.click();

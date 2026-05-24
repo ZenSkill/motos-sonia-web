@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "email": null,
+      "passwordHash": "$2b$10$2Ec7VFnm2A44dqmMf0wMPOYA8hqG0SeTG8kdYrW85cwvdaKcARpRe",
+      "createdAt": 1779648692133
+    }
+  ],
+  "resetTokens": []
+}
