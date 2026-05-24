@@ -4,15 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catálogo | Motos Sonia</title>
+  <meta name="description" content="Catálogo comercial de Motos Sonia con mototaxis, motocargas, motos lineales y repuestos en Huaral." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="./assets/icons/logo_favicon.png" />
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-wrap">
-      <a href="./index.html" class="brand"><img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" /><span>Motos Sonia</span></a>
+      <a href="./index.html" class="brand" aria-label="Motos Sonia inicio">
+        <img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" />
+        <span>Motos Sonia</span>
+      </a>
       <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
       <nav class="site-nav" data-nav>
         <a href="./index.html">Inicio</a>
@@ -20,7 +26,6 @@
         <a href="./producto.html">Producto</a>
         <a href="./nosotros.html">Nosotros</a>
         <a href="./contacto.html">Contacto</a>
-        <a class="button button-primary" target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia%2C%20quiero%20ver%20su%20cat%C3%A1logo">Consultar por WhatsApp</a>
       </nav>
     </div>
   </header>
@@ -28,40 +33,55 @@
   <main id="contenido">
     <section class="page-hero section">
       <div class="container narrow">
-        <p class="eyebrow">Catálogo comercial</p>
-        <h1>Categorías organizadas para una búsqueda más rápida.</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p class="eyebrow" data-catalog-hero-eyebrow>Catálogo comercial</p>
+        <h1 data-catalog-hero-title>Mototaxis, motocargas y repuestos listos para cotizar.</h1>
+        <p data-catalog-hero-description>Encuentra rápidamente lo que necesitas y consulta disponibilidad por WhatsApp con atención local en Huaral.</p>
+        <div class="hero-actions">
+          <a class="button button-whatsapp" target="_blank" rel="noopener noreferrer" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia%2C%20quiero%20ver%20su%20cat%C3%A1logo">Consultar por WhatsApp</a>
+          <a class="button button-secondary" href="./contacto.html">Ver contacto</a>
+        </div>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
-        <div class="category-list">
-          <article class="category-card large">
-            <img src="./assets/img/categorias/cat-motocargueros.svg" alt="Categoría motocargueros" width="400" height="400" loading="lazy" />
-            <div>
-              <p class="card-tag">Categoría</p>
-              <h2>Motocargueros</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-              <a class="button button-secondary" href="./producto.html">Explorar ficha</a>
-            </div>
-          </article>
-          <article class="category-card">
-            <img src="./assets/img/categorias/cat-lineales.svg" alt="Categoría motos lineales" width="400" height="400" loading="lazy" />
-            <div><h2>Motos lineales</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
-          </article>
-          <article class="category-card">
-            <img src="./assets/img/categorias/cat-mototaxis.svg" alt="Categoría mototaxis" width="400" height="400" loading="lazy" />
-            <div><h2>Mototaxis</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
-          </article>
-          <article class="category-card">
-            <img src="./assets/img/categorias/cat-motores.svg" alt="Categoría motores" width="400" height="400" loading="lazy" />
-            <div><h2>Motores</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
-          </article>
-          <article class="category-card">
-            <img src="./assets/img/categorias/cat-aceites.svg" alt="Categoría aceites y lubricantes" width="400" height="400" loading="lazy" />
-            <div><h2>Aceites y lubricantes</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
-          </article>
+        <div class="section-head">
+          <p class="eyebrow">Categorías principales</p>
+          <h2>Organiza el catálogo por línea de negocio.</h2>
+          <p>Explora por categoría y encuentra la línea que necesitas sin perder tiempo.</p>
+        </div>
+        <div class="catalog-summary category-list" id="catalogCategories" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section section-soft">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Productos destacados</p>
+          <h2>Los productos cargados desde JSON.</h2>
+          <p>Consulta productos, precios y disponibilidad en un formato claro y fácil de navegar.</p>
+        </div>
+        <div class="grid cards-3" id="catalogProducts" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container split-section">
+        <div class="feature-panel">
+          <p class="eyebrow">Confianza comercial</p>
+          <h2>Todo listo para cotizar rápido y sin complicaciones.</h2>
+          <ul class="feature-list">
+            <li>Atención local en Huaral.</li>
+            <li>Venta al por mayor y menor.</li>
+            <li>Consulta de modelos y repuestos en un solo lugar.</li>
+            <li>Respuesta rápida por WhatsApp.</li>
+          </ul>
+        </div>
+        <div class="feature-panel">
+          <p class="eyebrow">Siguiente paso</p>
+          <h2>Escríbenos para validar stock, precio y disponibilidad.</h2>
+          <p>Si quieres revisar un modelo puntual, te respondemos por WhatsApp con información comercial clara y directa.</p>
+          <a class="button button-whatsapp" target="_blank" rel="noopener noreferrer" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia%2C%20quiero%20actualizar%20el%20cat%C3%A1logo">Consultar por WhatsApp</a>
         </div>
       </div>
     </section>
@@ -69,10 +89,33 @@
 
   <footer class="site-footer compact-footer">
     <div class="container footer-grid">
-      <div><p>© Motos Sonia. Catálogo digital listo para desplegar.</p></div>
-      <div><a href="./contacto.html">Ir a contacto</a></div>
+      <div class="footer-block">
+        <p class="footer-title">Motos Sonia</p>
+        <p>Catálogo comercial listo para consultas, con atención directa en Huaral y respuesta rápida por WhatsApp.</p>
+        <p class="footer-note">Explora el catálogo y sigue navegando con una experiencia continua.</p>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Accesos</h3>
+        <ul role="list" class="footer-social-list">
+          <li><a href="./contacto.html">Ir a contacto</a></li>
+          <li><a href="./producto.html">Ver producto</a></li>
+          <li><a class="footer-icon-link" target="_blank" rel="noopener noreferrer" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia%2C%20quiero%20ver%20el%20cat%C3%A1logo"><i class="fa-brands fa-whatsapp footer-icon icon-whatsapp" aria-hidden="true"></i><span>WhatsApp</span></a></li>
+        </ul>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Legal</h3>
+        <ul role="list">
+          <li><strong>© 2026 Motos Sonia</strong></li>
+          <li>Todos los derechos reservados</li>
+          <li><a href="./privacy.html">Política de privacidad</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
-  <script src="./assets/js/main.js" defer></script>
+
+  <a class="whatsapp-float" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia" target="_blank" rel="noopener noreferrer" aria-label="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp footer-icon icon-whatsapp" aria-hidden="true"></i></a>
+  <script src="./assets/js/main.js?v=3" defer></script>
+  <script src="./assets/js/catalogo-core.js?v=4" defer></script>
+  <script src="./assets/js/catalogo.js?v=2" defer></script>
 </body>
 </html>

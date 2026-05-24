@@ -7,7 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="./assets/icons/logo_favicon.png" />
 </head>
 <body>
   <header class="site-header">
@@ -28,24 +30,24 @@
     <section class="section">
       <div class="container product-layout">
         <div class="product-gallery">
-          <img id="mainProductImage" class="main-product-image" src="./assets/img/productos/motocarguero-01.svg" alt="Imagen principal del producto" width="400" height="400" />
+          <img id="mainProductImage" class="main-product-image" src="./img/categorias/motocarga_plt.png" alt="Imagen principal del producto" width="400" height="400" />
           <div class="thumb-row">
-            <button class="thumb active" data-thumb="./assets/img/productos/motocarguero-01.svg"><img src="./assets/img/productos/motocarguero-01.svg" alt="Vista uno del producto" width="120" height="120" loading="lazy" /></button>
-            <button class="thumb" data-thumb="./assets/img/productos/motocarguero-02.svg"><img src="./assets/img/productos/motocarguero-02.svg" alt="Vista dos del producto" width="120" height="120" loading="lazy" /></button>
-            <button class="thumb" data-thumb="./assets/img/productos/motocarguero-03.svg"><img src="./assets/img/productos/motocarguero-03.svg" alt="Vista tres del producto" width="120" height="120" loading="lazy" /></button>
+            <button class="thumb active" data-thumb="./img/categorias/motocarga_plt.png"><img src="./img/categorias/motocarga_plt.png" alt="Vista uno del producto" width="120" height="120" loading="lazy" /></button>
+            <button class="thumb" data-thumb="./img/categorias/mototaxi_plt.png"><img src="./img/categorias/mototaxi_plt.png" alt="Vista dos del producto" width="120" height="120" loading="lazy" /></button>
+            <button class="thumb" data-thumb="./img/categorias/moto_lineal_plt.png"><img src="./img/categorias/moto_lineal_plt.png" alt="Vista tres del producto" width="120" height="120" loading="lazy" /></button>
           </div>
         </div>
         <div class="product-copy">
           <p class="eyebrow">Ficha técnica comercial</p>
           <h1>Motocarguero Pro Cargo 250</h1>
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+          <p class="lead">Ficha base para presentar un vehículo de trabajo con enfoque comercial, lista para adaptar a cada modelo real.</p>
           <div class="spec-grid">
             <div><span>Motor</span><strong>250 cc</strong></div>
             <div><span>Capacidad</span><strong>500 kg</strong></div>
             <div><span>Uso sugerido</span><strong>Transporte de carga</strong></div>
             <div><span>Disponibilidad</span><strong>Consultar</strong></div>
           </div>
-          <a class="button button-primary whatsapp-cta" target="_blank" rel="noopener noreferrer" href="https://wa.me/51999999999?text=Hola%20Motos%20Sonia%2C%20quiero%20consultar%20por%20la%20Motocarguero%20Pro%20Cargo%20250">Consultar por WhatsApp</a>
+          <a class="button button-whatsapp whatsapp-cta" target="_blank" rel="noopener noreferrer" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia%2C%20quiero%20consultar%20por%20la%20Motocarguero%20Pro%20Cargo%20250">Consultar por WhatsApp</a>
         </div>
       </div>
     </section>
@@ -57,8 +59,8 @@
           <h2>Detalle del producto</h2>
         </div>
         <div>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+          <p>Esta ficha sirve como plantilla para mostrar datos clave, imágenes y texto de venta de forma clara y ordenada.</p>
+          <p>Puedes reemplazar el contenido por especificaciones exactas, beneficios, medidas y condiciones de venta del producto real.</p>
         </div>
       </div>
     </section>
@@ -66,10 +68,31 @@
 
   <footer class="site-footer compact-footer">
     <div class="container footer-grid">
-      <div><p>Ficha de producto lista para reutilizar con más modelos.</p></div>
-      <div><a href="./catalogo.html">Volver al catálogo</a></div>
+      <div class="footer-block">
+        <p class="footer-title">Ficha comercial</p>
+        <p>Modelo base listo para adaptar a nuevos productos, imágenes y especificaciones de venta.</p>
+        <p class="footer-note">Revisa el producto y continúa navegando con una experiencia fluida.</p>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Información útil</h3>
+        <ul role="list">
+          <li>Consulta stock y precios por WhatsApp</li>
+          <li>Revisa el catálogo completo</li>
+          <li>Confirma atención en Huaral</li>
+        </ul>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Accesos</h3>
+        <div class="footer-legal">
+          <div><strong>© 2026 Motos Sonia</strong><span>Todos los derechos reservados</span></div>
+          <div><strong>Privacidad</strong><span><a href="./privacy.html">Política de privacidad</a></span></div>
+          <div><a class="footer-icon-link" href="./catalogo.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Volver al catálogo</span></a> · <a class="footer-icon-link" href="./contacto.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Contacto</span></a></div>
+        </div>
+      </div>
     </div>
   </footer>
-  <script src="./assets/js/main.js" defer></script>
+
+  <a class="whatsapp-float" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia" target="_blank" rel="noopener noreferrer" aria-label="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp footer-icon icon-whatsapp" aria-hidden="true"></i></a>
+  <script src="./assets/js/main.js?v=3" defer></script>
 </body>
 </html>

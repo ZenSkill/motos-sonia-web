@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "hero": {
+      "eyebrow": "Catálogo comercial",
+      "title": "Mototaxis, motocargas y repuestos listos para cotizar.",
+      "description": "Encuentra rápidamente lo que necesitas y consulta disponibilidad por WhatsApp con atención local en Huaral."
+    }
+  },
+  "categories": [
+    {
+      "name": "Motocargueros",
+      "image": "./img/categorias/motocarga_plt.png",
+      "imageAlt": "Motocargueros",
+      "description": "Motocargueros para reparto urbano y trabajo diario."
+    },
+    {
+      "name": "Mototaxis",
+      "image": "./img/categorias/mototaxi_plt.png",
+      "imageAlt": "Mototaxis",
+      "description": "Mototaxis comerciales listas para consulta."
+    },
+    {
+      "name": "Motos lineales",
+      "image": "./img/categorias/moto_lineal_plt.png",
+      "imageAlt": "Motos lineales",
+      "description": "Motos lineales para movilidad y trabajo mixto."
+    },
+    {
+      "name": "Repuestos",
+      "image": "./img/categorias/repuestos_plt.png",
+      "imageAlt": "Repuestos",
+      "description": "Repuestos y consumibles para mantenimiento."
+    }
+  ],
+  "products": [
+    {
+      "id": "tvs-king-cargo-3s",
+      "name": "TVS King Cargo 3S",
+      "price": "Consultar",
+      "description": "Motocarguero de trabajo para reparto urbano, carga ligera y recorridos diarios.",
+      "category": "Motocargueros",
+      "image": "",
+      "imageAlt": "TVS King Cargo 3S",
+      "badge": "Consulta disponibilidad",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la TVS King Cargo 3S",
+      "featured": true
+    },
+    {
+      "id": "bajaj-re-cargo",
+      "name": "Bajaj RE Cargo",
+      "price": "Consultar",
+      "description": "Solución de carga compacta para negocios que necesitan maniobrabilidad y resistencia.",
+      "category": "Motocargueros",
+      "image": "",
+      "imageAlt": "Bajaj RE Cargo",
+      "badge": "Trabajo pesado",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la Bajaj RE Cargo",
+      "featured": false
+    },
+    {
+      "id": "tvs-king-deluxe",
+      "name": "TVS King Deluxe",
+      "price": "Consultar",
+      "description": "Mototaxi comercial para transporte urbano con foco en economía y rendimiento.",
+      "category": "Mototaxis",
+      "image": "",
+      "imageAlt": "TVS King Deluxe",
+      "badge": "Alta rotación",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la TVS King Deluxe",
+      "featured": true
+    },
+    {
+      "id": "piaggio-ape-city",
+      "name": "Piaggio Ape City",
+      "price": "Consultar",
+      "description": "Mototaxi pensada para uso comercial con una presencia sólida y conocida en el mercado.",
+      "category": "Mototaxis",
+      "image": "",
+      "imageAlt": "Piaggio Ape City",
+      "badge": "Referencia comercial",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la Piaggio Ape City",
+      "featured": false
+    },
+    {
+      "id": "honda-xr150l",
+      "name": "Honda XR150L",
+      "price": "Consultar",
+      "description": "Moto lineal confiable para trabajo ligero, trayectos mixtos y movilidad diaria.",
+      "category": "Motos lineales",
+      "image": "",
+      "imageAlt": "Honda XR150L",
+      "badge": "Todo terreno",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la Honda XR150L",
+      "featured": true
+    },
+    {
+      "id": "yamaha-fz-s-fi-v4",
+      "name": "Yamaha FZ-S FI V4",
+      "price": "Consultar",
+      "description": "Alternativa urbana con estilo comercial y desempeño equilibrado para el día a día.",
+      "category": "Motos lineales",
+      "image": "",
+      "imageAlt": "Yamaha FZ-S FI V4",
+      "badge": "Urbana",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por la Yamaha FZ-S FI V4",
+      "featured": false
+    },
+    {
+      "id": "kit-de-arrastre-428h",
+      "name": "Kit de arrastre 428H",
+      "price": "Consultar",
+      "description": "Kit de transmisión para mantenimiento y reposición de motos y mototaxis de trabajo.",
+      "category": "Repuestos",
+      "image": "",
+      "imageAlt": "Kit de arrastre 428H",
+      "badge": "Mantenimiento",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por un kit de arrastre 428H",
+      "featured": true
+    },
+    {
+      "id": "motul-5100-20w50",
+      "name": "Motul 5100 20W-50",
+      "price": "Consultar",
+      "description": "Aceite semisintético para mantenimiento preventivo y buen rendimiento del motor.",
+      "category": "Repuestos",
+      "image": "",
+      "imageAlt": "Motul 5100 20W-50",
+      "badge": "Lubricantes",
+      "whatsappText": "Hola Motos Sonia, quiero consultar por el Motul 5100 20W-50",
+      "featured": false
+    }
+  ]
+}

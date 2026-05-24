@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin catálogo | Motos Sonia</title>
+  <meta name="description" content="Panel interno para administrar el catálogo de Motos Sonia desde un solo archivo JSON." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <link rel="icon" href="./assets/icons/logo_favicon.png" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a href="./index.html" class="brand" aria-label="Motos Sonia inicio">
+        <img src="./assets/icons/logo.png" alt="Logo de Motos Sonia" width="44" height="44" />
+        <span>Motos Sonia</span>
+      </a>
+      <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
+      <nav class="site-nav" data-nav>
+        <a href="./index.html">Inicio</a>
+        <a href="./catalogo.html">Catálogo</a>
+        <a href="./admin.html" class="active">Admin</a>
+        <a href="./contacto.html">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <section class="page-hero section">
+      <div class="container narrow">
+        <p class="eyebrow">Panel interno</p>
+        <h1>Administrar catálogo desde un solo formulario.</h1>
+        <p>Agrega, edita, elimina, importa y exporta productos. El panel guarda cambios localmente y te permite descargar el archivo <strong>catalogo.json</strong> listo para publicar.</p>
+        <div class="hero-actions">
+          <button class="button button-whatsapp" type="button" id="catalogAdminExport">Exportar JSON</button>
+          <a class="button button-secondary" href="./catalogo.html">Ver catálogo</a>
+        </div>
+        <div class="catalog-note">
+          <strong>Importante:</strong> las portadas por defecto salen de <code>img/categorias/</code>. Si un producto no tiene foto propia, el catálogo usará la imagen de su categoría.
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container admin-shell">
+        <div class="admin-panel">
+          <div class="section-head">
+            <p class="eyebrow">Nuevo o editar</p>
+            <h2>Ficha del producto</h2>
+            <p>Completa los datos mínimos y el catálogo se actualizará al instante en el panel.</p>
+          </div>
+
+          <form class="admin-form" id="catalogAdminForm">
+            <input type="hidden" id="catalogAdminId" />
+
+            <div class="admin-grid-two">
+              <div class="admin-field">
+                <label for="catalogAdminName">Nombre</label>
+                <input id="catalogAdminName" type="text" placeholder="Ej. Mototaxi Urbana Plus" required />
+              </div>
+              <div class="admin-field">
+                <label for="catalogAdminCategory">Categoría</label>
+                <input id="catalogAdminCategory" type="text" placeholder="Ej. Mototaxis" required />
+              </div>
+            </div>
+
+            <div class="admin-grid-two">
+              <div class="admin-field">
+                <label for="catalogAdminPrice">Precio</label>
+                <input id="catalogAdminPrice" type="text" placeholder="Ej. S/ consultar" />
+              </div>
+              <div class="admin-field">
+                <label for="catalogAdminBadge">Etiqueta</label>
+                <input id="catalogAdminBadge" type="text" placeholder="Ej. Recomendado" />
+              </div>
+            </div>
+
+            <div class="admin-field">
+              <label for="catalogAdminDescription">Descripción</label>
+              <textarea id="catalogAdminDescription" rows="4" placeholder="Describe el producto con un tono comercial claro."></textarea>
+            </div>
+
+            <div class="admin-grid-two">
+              <div class="admin-field">
+                <label for="catalogAdminImage">Ruta de imagen</label>
+                <input id="catalogAdminImage" type="text" placeholder="Ej. ./img/catalogo/mototaxis/urbana-plus.jpg" />
+              </div>
+              <div class="admin-field">
+                <label for="catalogAdminImageAlt">Texto alternativo</label>
+                <input id="catalogAdminImageAlt" type="text" placeholder="Ej. Mototaxi Urbana Plus" />
+              </div>
+            </div>
+
+            <div class="admin-field">
+              <label for="catalogAdminWhatsapp">Texto para WhatsApp</label>
+              <input id="catalogAdminWhatsapp" type="text" placeholder="Ej. Hola Motos Sonia, quiero cotizar la Mototaxi Urbana Plus" />
+            </div>
+
+            <label class="admin-checkbox" for="catalogAdminFeatured">
+              <input id="catalogAdminFeatured" type="checkbox" />
+              Marcar como destacado
+            </label>
+
+            <div class="admin-toolbar">
+              <button class="button button-whatsapp" type="submit">Guardar producto</button>
+              <button class="button button-secondary" type="button" id="catalogAdminNew">Nuevo</button>
+              <button class="button button-secondary" type="button" id="catalogAdminReset">Limpiar formulario</button>
+              <button class="button button-secondary" type="button" id="catalogAdminClear">Restaurar base</button>
+              <button class="button button-secondary" type="button" id="catalogAdminImportButton">Importar JSON</button>
+              <input id="catalogAdminImport" type="file" accept="application/json" hidden />
+            </div>
+          </form>
+
+          <p class="admin-status" id="catalogAdminStatus" role="status" aria-live="polite">Cargando catálogo...</p>
+        </div>
+
+        <div class="admin-list-panel">
+          <div class="section-head">
+            <p class="eyebrow">Productos cargados</p>
+            <h2>Listado actual</h2>
+            <p>Edita o elimina cada tarjeta según necesites. El orden prioriza los productos destacados.</p>
+          </div>
+          <div class="admin-list" id="catalogAdminList" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer compact-footer">
+    <div class="container footer-grid">
+      <div class="footer-block">
+        <p class="footer-title">Panel interno</p>
+        <p>Administración del catálogo de Motos Sonia con exportación JSON e importación de productos.</p>
+        <p class="footer-note">Administra el catálogo y conserva tu flujo de trabajo con una sesión cómoda.</p>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Flujo recomendado</h3>
+        <ul role="list">
+          <li>Editar productos desde el formulario</li>
+          <li>Exportar JSON para publicar cambios</li>
+          <li>Usar imágenes locales o Cloudinary</li>
+        </ul>
+      </div>
+      <div class="footer-block">
+        <h3 class="footer-title">Legal</h3>
+        <div class="footer-legal">
+          <div><strong>© 2026 Motos Sonia</strong><span>Todos los derechos reservados</span></div>
+          <div><strong>Privacidad</strong><span><a href="./privacy.html">Política de privacidad</a></span></div>
+          <div><a class="footer-icon-link" href="./catalogo.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Volver al catálogo</span></a></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia" target="_blank" rel="noopener noreferrer" aria-label="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp footer-icon icon-whatsapp" aria-hidden="true"></i></a>
+
+  <script src="./assets/js/main.js?v=3" defer></script>
+  <script src="./assets/js/catalogo-core.js?v=4" defer></script>
+  <script src="./assets/js/admin-catalogo.js?v=2" defer></script>
+  <script>
+    document.getElementById('catalogAdminImportButton')?.addEventListener('click', () => {
+      document.getElementById('catalogAdminImport')?.click();
+    });
+  </script>
+</body>
+</html>
