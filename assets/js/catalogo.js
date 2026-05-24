@@ -120,11 +120,9 @@
     article.appendChild(description);
 
     const button = document.createElement('a');
-    button.className = 'button button-whatsapp';
-    button.href = core.whatsappUrl(product.whatsappText || `Hola Motos Sonia, quiero consultar por ${product.name}`);
-    button.target = '_blank';
-    button.rel = 'noopener noreferrer';
-    button.textContent = 'Consultar por WhatsApp';
+    button.className = 'button button-secondary';
+    button.href = `./producto.html?product=${encodeURIComponent(product.id)}`;
+    button.textContent = 'Ver detalles';
     article.appendChild(button);
 
     return article;

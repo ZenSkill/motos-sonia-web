@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Producto | Motos Sonia</title>
+  <title>Productos | Motos Sonia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@
       <nav class="site-nav" data-nav>
         <a href="./index.html">Inicio</a>
         <a href="./catalogo.html">Catálogo</a>
-        <a href="./producto.html" class="active">Producto</a>
+        <a href="./producto.html" class="active">Productos</a>
         <a href="./nosotros.html">Nosotros</a>
         <a href="./contacto.html">Contacto</a>
       </nav>
@@ -27,40 +27,87 @@
   </header>
 
   <main id="contenido">
-    <section class="section">
-      <div class="container product-layout">
-        <div class="product-gallery">
-          <img id="mainProductImage" class="main-product-image" src="./img/categorias/motocarga_plt.png" alt="Imagen principal del producto" width="400" height="400" />
-          <div class="thumb-row">
-            <button class="thumb active" data-thumb="./img/categorias/motocarga_plt.png"><img src="./img/categorias/motocarga_plt.png" alt="Vista uno del producto" width="120" height="120" loading="lazy" /></button>
-            <button class="thumb" data-thumb="./img/categorias/mototaxi_plt.png"><img src="./img/categorias/mototaxi_plt.png" alt="Vista dos del producto" width="120" height="120" loading="lazy" /></button>
-            <button class="thumb" data-thumb="./img/categorias/moto_lineal_plt.png"><img src="./img/categorias/moto_lineal_plt.png" alt="Vista tres del producto" width="120" height="120" loading="lazy" /></button>
-          </div>
-        </div>
-        <div class="product-copy">
-          <p class="eyebrow">Ficha técnica comercial</p>
-          <h1>Motocarguero Pro Cargo 250</h1>
-          <p class="lead">Ficha base para presentar un vehículo de trabajo con enfoque comercial, lista para adaptar a cada modelo real.</p>
-          <div class="spec-grid">
-            <div><span>Motor</span><strong>250 cc</strong></div>
-            <div><span>Capacidad</span><strong>500 kg</strong></div>
-            <div><span>Uso sugerido</span><strong>Transporte de carga</strong></div>
-            <div><span>Disponibilidad</span><strong>Consultar</strong></div>
-          </div>
-          <a class="button button-whatsapp whatsapp-cta" target="_blank" rel="noopener noreferrer" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia%2C%20quiero%20consultar%20por%20la%20Motocarguero%20Pro%20Cargo%20250">Consultar por WhatsApp</a>
+    <section class="section page-hero">
+      <div class="container narrow">
+        <p class="eyebrow">Buscador de productos</p>
+        <h1>Explora, filtra y abre cada ficha antes de contactar.</h1>
+        <p class="lead">Esta página reemplaza la idea de una sola ficha. Aquí el usuario puede buscar productos, filtrar por categoría y ver una vista general antes de decidir si consulta por WhatsApp.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#productBrowser">Buscar productos</a>
+          <a class="button button-secondary" href="./catalogo.html">Volver al catálogo</a>
         </div>
       </div>
     </section>
 
-    <section class="section section-soft">
+    <section class="section section-soft" id="productBrowser">
+      <div class="container product-browser-shell">
+        <div class="product-browser-header">
+          <div>
+            <p class="eyebrow">Vista general</p>
+            <h2>Productos cargados desde el catálogo</h2>
+            <p class="muted-copy">Busca por nombre o categoría, y selecciona un producto para ver más información en el panel lateral.</p>
+          </div>
+          <div class="product-browser-stats">
+            <div><strong data-product-count>0</strong><span>productos</span></div>
+            <div><strong data-product-category-count>0</strong><span>categorías</span></div>
+          </div>
+        </div>
+
+        <div class="product-toolbar">
+          <label class="product-field">
+            <span>Buscar</span>
+            <input type="search" placeholder="Ej. mototaxi, repuesto, cargo..." data-product-search />
+          </label>
+          <label class="product-field">
+            <span>Categoría</span>
+            <select data-product-category>
+              <option value="all">Todas</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="product-browser-layout">
+          <aside class="product-detail-panel" data-product-detail>
+            <p class="eyebrow">Detalle del producto</p>
+            <h2 data-product-detail-title>Selecciona un producto</h2>
+            <div class="product-detail-media">
+              <img data-product-detail-image src="./img/categorias/mototaxi_plt.png" alt="Detalle del producto" width="900" height="700" />
+            </div>
+            <p class="card-tag is-primary" data-product-detail-badge>Vista general</p>
+            <div class="spec-grid product-detail-specs">
+              <div><span>Categoría</span><strong data-product-detail-category>General</strong></div>
+              <div><span>Precio</span><strong data-product-detail-price>Consultar</strong></div>
+              <div><span>Estado</span><strong data-product-detail-status>Disponible para consulta</strong></div>
+              <div><span>Acción</span><strong>Ver más abajo</strong></div>
+            </div>
+            <p data-product-detail-description>Elige un producto de la lista para ver su información.</p>
+            <div class="hero-actions">
+              <a class="button button-whatsapp" target="_blank" rel="noopener noreferrer" data-product-detail-whatsapp href="#">Consultar por WhatsApp</a>
+              <a class="button button-secondary" href="./contacto.html">Ir a contacto</a>
+            </div>
+          </aside>
+
+          <div class="product-browser-list">
+            <div class="section-head section-head-tight">
+              <p class="eyebrow">Listado</p>
+              <h2>Selecciona una opción</h2>
+            </div>
+            <div class="grid cards-3" data-product-grid></div>
+            <p class="admin-empty" data-product-empty hidden>No hay productos que coincidan con los filtros actuales.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
       <div class="container split-section details-block">
         <div>
-          <p class="eyebrow">Descripción</p>
-          <h2>Detalle del producto</h2>
+          <p class="eyebrow">Recomendación</p>
+          <h2>Usa esta página para explorar, no para cerrar la compra de inmediato.</h2>
         </div>
         <div>
-          <p>Esta ficha sirve como plantilla para mostrar datos clave, imágenes y texto de venta de forma clara y ordenada.</p>
-          <p>Puedes reemplazar el contenido por especificaciones exactas, beneficios, medidas y condiciones de venta del producto real.</p>
+          <p>El catálogo te muestra la oferta comercial en general. La página de productos ahora funciona como buscador con filtros y panel de detalle, para que el cliente vea más información antes de hablar con ventas.</p>
+          <p>Eso encaja mejor con un negocio real: primero comparar, luego consultar stock, precio o disponibilidad.</p>
         </div>
       </div>
     </section>
@@ -69,16 +116,16 @@
   <footer class="site-footer compact-footer">
     <div class="container footer-grid">
       <div class="footer-block">
-        <p class="footer-title">Ficha comercial</p>
-        <p>Modelo base listo para adaptar a nuevos productos, imágenes y especificaciones de venta.</p>
-        <p class="footer-note">Revisa el producto y continúa navegando con una experiencia fluida.</p>
+        <p class="footer-title">Productos</p>
+        <p>Buscador general para revisar las fichas antes de contactar al negocio.</p>
+        <p class="footer-note">Horario de atención: lunes a sábado, de 8:00 a. m. a 6:00 p. m.</p>
       </div>
       <div class="footer-block">
         <h3 class="footer-title">Información útil</h3>
         <ul role="list">
-          <li>Consulta stock y precios por WhatsApp</li>
-          <li>Revisa el catálogo completo</li>
-          <li>Confirma atención en Huaral</li>
+          <li>Usa el buscador para ubicar productos</li>
+          <li>Compara categorías y detalles</li>
+          <li>Consulta stock después de revisar</li>
         </ul>
       </div>
       <div class="footer-block">
@@ -86,13 +133,15 @@
         <div class="footer-legal">
           <div><strong>© 2026 Motos Sonia</strong><span>Todos los derechos reservados</span></div>
           <div><strong>Privacidad</strong><span><a href="./privacy.html">Política de privacidad</a></span></div>
-          <div><a class="footer-icon-link" href="./catalogo.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Volver al catálogo</span></a> · <a class="footer-icon-link" href="./contacto.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Contacto</span></a></div>
+          <div><a class="footer-icon-link" href="./catalogo.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Ir al catálogo</span></a> · <a class="footer-icon-link" href="./contacto.html"><i class="fa-solid fa-arrow-right footer-icon icon-arrow" aria-hidden="true"></i><span>Contacto</span></a></div>
         </div>
       </div>
     </div>
   </footer>
 
   <a class="whatsapp-float" href="https://wa.me/5116931840?text=Hola%20Motos%20Sonia" target="_blank" rel="noopener noreferrer" aria-label="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp footer-icon icon-whatsapp" aria-hidden="true"></i></a>
-  <script src="./assets/js/main.js?v=3" defer></script>
+  <script src="./assets/js/main.js?v=4" defer></script>
+  <script src="./assets/js/catalogo-core.js?v=4" defer></script>
+  <script src="./assets/js/productos.js?v=1" defer></script>
 </body>
 </html>
